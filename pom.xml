@@ -464,6 +464,7 @@
                 <module>core</module>
                 <module>webdriver-factory</module>
                 <module>webdriver</module>
+                <module>rest</module>
                 <module>vendor-support</module>
                 <module>vendor-saucelabs</module>
                 <module>vendor-browserstack</module>
