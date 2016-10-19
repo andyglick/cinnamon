@@ -2,6 +2,8 @@ package io.magentys.rest.model;
 
 import io.restassured.response.Response;
 
+import java.util.function.Supplier;
+
 public class RestAssuredResponse<T> implements RestResponse<T> {
 
     private final Response response;
@@ -39,5 +41,13 @@ public class RestAssuredResponse<T> implements RestResponse<T> {
     @Override
     public boolean ok() {
         return statusCode() < 300;
+    }
+
+    public static <T> RestResponse<T> constructFrom(Response response, Supplier<T> data){
+        if (response.statusCode() < 300) {
+            return new RestAssuredResponse<T>(response);
+        } else {
+            return new RestAssuredResponse<T>(response, data.get());
+        }
     }
 }
