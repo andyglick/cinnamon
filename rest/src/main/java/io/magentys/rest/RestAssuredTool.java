@@ -1,11 +1,8 @@
 package io.magentys.rest;
 
-import io.magentys.rest.model.RestResponse;
 import io.restassured.RestAssured;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.specification.RequestSpecification;
-
-import javax.xml.ws.Response;
 
 public class RestAssuredTool {
 
@@ -21,9 +18,5 @@ public class RestAssuredTool {
 
     public RequestSpecification requestSpecification() {
         return requestSpecification;
-    }
-
-    public <T> RestResponse<T> toRestResponse(final Response response, final T t) {
-        return null;
     }
 }
