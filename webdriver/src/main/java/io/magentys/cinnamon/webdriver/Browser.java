@@ -24,6 +24,10 @@ public final class Browser {
         getWebDriver().get(url);
     }
 
+    public static String currentUrl() {
+        return getWebDriver().getCurrentUrl();
+    }
+
     /**
      * Gets the title of the current page.
      *
