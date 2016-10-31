@@ -48,8 +48,16 @@ public class RestAssuredResponseTest {
     }
 
     @Test
-    public void shouldConstructResponseAndReturnNull() {
+    public void shouldConstructResponseAndReturnNullIfHttpErrorCode() {
         when(mockResponse.statusCode()).thenReturn(404);
+        RestResponse<Dummy> response = constructFrom(mockResponse, () -> mockResponse.as(Dummy.class));
+        assertThat(response.data(), equalTo(null));
+    }
+
+    @Test
+    public void shouldConstructResponseAndReturnNullIfNullContent() {
+        when(mockResponse.statusCode()).thenReturn(200);
+        when(mockResponse.as(Dummy.class)).thenReturn(null);
         RestResponse<Dummy> response = constructFrom(mockResponse, () -> mockResponse.as(Dummy.class));
         assertThat(response.data(), equalTo(null));
     }
@@ -59,16 +67,8 @@ public class RestAssuredResponseTest {
         private Integer id;
         private String name;
 
-        Integer getId() {
-            return id;
-        }
-
         void setId(Integer id) {
             this.id = id;
-        }
-
-        String getName() {
-            return name;
         }
 
         void setName(String name) {
