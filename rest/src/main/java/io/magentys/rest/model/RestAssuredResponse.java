@@ -43,11 +43,7 @@ public class RestAssuredResponse<T> implements RestResponse<T> {
         return statusCode() < 400;
     }
 
-    public static <T> RestResponse<T> constructFrom(Response response, Supplier<T> data){
-        if (response.statusCode() < 400) {
-            return new RestAssuredResponse<>(response);
-        } else {
-            return new RestAssuredResponse<>(response, data.get());
-        }
+    public static <T> RestResponse<T> constructFrom(Response response, Supplier<T> data) {
+        return response.statusCode() >= 400 ? new RestAssuredResponse<>(response) : new RestAssuredResponse<>(response, data.get());
     }
 }
