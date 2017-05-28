@@ -26,90 +26,87 @@ import com.google.common.collect.Lists;
 
 public class CinnamonExpectedConditionsTest {
 
-    @Mock
-    private WebDriver mockDriver;
-    @Mock
-    private WebElement mockElement;
-    @Mock
-    private WebElement mockNestedElement;
-    @Mock
-    private Clock mockClock;
-    @Mock
-    private Sleeper mockSleeper;
-    @Mock
-    private Condition<WebElement> mockCondition;
+  @Mock
+  private WebDriver mockDriver;
+  @Mock
+  private WebElement mockElement;
+  @Mock
+  private Clock mockClock;
+  @Mock
+  private Sleeper mockSleeper;
+  @Mock
+  private Condition<WebElement> mockCondition;
 
-    private FluentWait<SearchContext> wait;
+  private FluentWait<SearchContext> wait;
 
-    @Rule
-    public ExpectedException expectedException = ExpectedException.none();
+  @Rule
+  public ExpectedException expectedException = ExpectedException.none();
 
-    @Before
-    public void setUpMocks() {
-        MockitoAnnotations.initMocks(this);
-        wait = new FluentWait<SearchContext>(mockDriver, mockClock, mockSleeper).withTimeout(5, TimeUnit.SECONDS).pollingEvery(1000,
-                TimeUnit.MILLISECONDS);
-    }
+  @Before
+  public void setUpMocks() {
+    MockitoAnnotations.initMocks(this);
+    wait = new FluentWait<SearchContext>(mockDriver, mockClock, mockSleeper).withTimeout(5, TimeUnit.SECONDS).pollingEvery(1000,
+      TimeUnit.MILLISECONDS);
+  }
 
-    @Test
-    public void conditionsOfElementLocatedReturnsWebElement() {
-        List<WebElement> webElements = Lists.newArrayList(mockElement);
-        when(mockDriver.findElements(By.id("someid"))).thenReturn(webElements);
-        when(mockCondition.apply(mockElement)).thenReturn(true);
-        WebElement elementLocated = wait.until(CinnamonExpectedConditions.conditionOfElementLocated(By.id("someid"), mockCondition));
-        assertEquals(mockElement, elementLocated);
-    }
+  @Test
+  public void conditionsOfElementLocatedReturnsWebElement() {
+    List<WebElement> webElements = Lists.newArrayList(mockElement);
+    when(mockDriver.findElements(By.id("someid"))).thenReturn(webElements);
+    when(mockCondition.apply(mockElement)).thenReturn(true);
+    WebElement elementLocated = wait.until(CinnamonExpectedConditions.conditionOfElementLocated(By.id("someid"), mockCondition));
+    assertEquals(mockElement, elementLocated);
+  }
 
-    @Test
-    public void conditionsOfElementLocatedThrowsTimeoutExceptionWhenNoElementsFound() {
-        expectedException.expect(TimeoutException.class);
-        expectedException.expectMessage("tried for 5 second");
+  @Test
+  public void conditionsOfElementLocatedThrowsTimeoutExceptionWhenNoElementsFound() {
+    expectedException.expect(TimeoutException.class);
+    expectedException.expectMessage("tried for 5 second");
 
-        List<WebElement> webElements = Lists.newArrayList();
-        when(mockDriver.findElements(By.id("someid"))).thenReturn(webElements);
-        wait.until(CinnamonExpectedConditions.conditionOfElementLocated(By.id("someid"), mockCondition));
-    }
+    List<WebElement> webElements = Lists.newArrayList();
+    when(mockDriver.findElements(By.id("someid"))).thenReturn(webElements);
+    wait.until(CinnamonExpectedConditions.conditionOfElementLocated(By.id("someid"), mockCondition));
+  }
 
-    @Test
-    public void conditionsOfElementLocatedThrowsTimeoutExceptionWhenNoElementsMatchCondition() {
-        expectedException.expect(TimeoutException.class);
-        expectedException.expectMessage("tried for 5 second");
+  @Test
+  public void conditionsOfElementLocatedThrowsTimeoutExceptionWhenNoElementsMatchCondition() {
+    expectedException.expect(TimeoutException.class);
+    expectedException.expectMessage("tried for 5 second");
 
-        List<WebElement> webElements = Lists.newArrayList(mockElement);
-        when(mockDriver.findElements(By.id("someid"))).thenReturn(webElements);
-        when(mockCondition.apply(mockElement)).thenReturn(false);
-        wait.until(CinnamonExpectedConditions.conditionOfElementLocated(By.id("someid"), mockCondition));
-    }
+    List<WebElement> webElements = Lists.newArrayList(mockElement);
+    when(mockDriver.findElements(By.id("someid"))).thenReturn(webElements);
+    when(mockCondition.apply(mockElement)).thenReturn(false);
+    wait.until(CinnamonExpectedConditions.conditionOfElementLocated(By.id("someid"), mockCondition));
+  }
 
-    @Test
-    public void conditionsOfAllElementsLocatedReturnsWebElements() {
-        List<WebElement> webElements = Lists.newArrayList(mockElement);
-        when(mockDriver.findElements(By.id("someid"))).thenReturn(webElements);
-        when(mockCondition.apply(mockElement)).thenReturn(true);
-        List<WebElement> allElementsLocated = wait.until(CinnamonExpectedConditions.conditionOfAllElementsLocated(By.id("someid"),
-                mockCondition));
-        assertEquals(webElements, allElementsLocated);
-    }
+  @Test
+  public void conditionsOfAllElementsLocatedReturnsWebElements() {
+    List<WebElement> webElements = Lists.newArrayList(mockElement);
+    when(mockDriver.findElements(By.id("someid"))).thenReturn(webElements);
+    when(mockCondition.apply(mockElement)).thenReturn(true);
+    List<WebElement> allElementsLocated = wait.until(CinnamonExpectedConditions.conditionOfAllElementsLocated(By.id("someid"),
+      mockCondition));
+    assertEquals(webElements, allElementsLocated);
+  }
 
-    @Test
-    public void conditionsOfAllElementsLocatedThrowsTimeoutExceptionWhenNoElementsFound() throws InterruptedException {
-        expectedException.expect(TimeoutException.class);
-        expectedException.expectMessage("tried for 5 second");
+  @Test
+  public void conditionsOfAllElementsLocatedThrowsTimeoutExceptionWhenNoElementsFound() throws InterruptedException {
+    expectedException.expect(TimeoutException.class);
+    expectedException.expectMessage("tried for 5 second");
 
-        List<WebElement> webElements = Lists.newArrayList();
-        when(mockDriver.findElements(By.id("someid"))).thenReturn(webElements);
-        wait.until(CinnamonExpectedConditions.conditionOfAllElementsLocated(By.id("someid"), mockCondition));
-    }
+    List<WebElement> webElements = Lists.newArrayList();
+    when(mockDriver.findElements(By.id("someid"))).thenReturn(webElements);
+    wait.until(CinnamonExpectedConditions.conditionOfAllElementsLocated(By.id("someid"), mockCondition));
+  }
 
-    @Test
-    public void conditionsOfAllElementsLocatedThrowsTimeoutExceptionWhenNoElementsMatchCondition() {
-        expectedException.expect(TimeoutException.class);
-        expectedException.expectMessage("tried for 5 second");
+  @Test
+  public void conditionsOfAllElementsLocatedThrowsTimeoutExceptionWhenNoElementsMatchCondition() {
+    expectedException.expect(TimeoutException.class);
+    expectedException.expectMessage("tried for 5 second");
 
-        List<WebElement> webElements = Lists.newArrayList(mockElement);
-        when(mockDriver.findElements(By.id("someid"))).thenReturn(webElements);
-        when(mockCondition.apply(mockElement)).thenReturn(false);
-        wait.until(CinnamonExpectedConditions.conditionOfAllElementsLocated(By.id("someid"), mockCondition));
-    }
-
+    List<WebElement> webElements = Lists.newArrayList(mockElement);
+    when(mockDriver.findElements(By.id("someid"))).thenReturn(webElements);
+    when(mockCondition.apply(mockElement)).thenReturn(false);
+    wait.until(CinnamonExpectedConditions.conditionOfAllElementsLocated(By.id("someid"), mockCondition));
+  }
 }

@@ -17,11 +17,12 @@
                 <artifactId>aspectj-maven-plugin</artifactId>
                 <configuration>
                     <aspectDirectory>src/main/java/io/cinnamon/cucumber</aspectDirectory>
-                    <source>1.8</source>
-                    <complianceLevel>1.8</complianceLevel>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                    <complianceLevel>${java.version}</complianceLevel>
                     <verbose>true</verbose>
                     <showWeaveInfo>true</showWeaveInfo>
-                    <target>1.8</target>
+
                     <weaveDependencies>
                         <weaveDependency>
                             <groupId>info.cukes</groupId>
@@ -97,10 +98,10 @@
             <artifactId>slf4j-api</artifactId>
         </dependency>
 
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>org.slf4j</groupId>-->
+            <!--<artifactId>slf4j-log4j12</artifactId>-->
+        <!--</dependency>-->
 
         <dependency>
             <groupId>info.cukes</groupId>
