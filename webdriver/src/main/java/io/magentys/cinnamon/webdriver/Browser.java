@@ -5,6 +5,7 @@ import io.magentys.cinnamon.webdriver.actions.synthetic.SyntheticEvent;
 import io.magentys.cinnamon.webdriver.conditions.Condition;
 import io.magentys.cinnamon.webdriver.support.ui.CinnamonExpectedConditions;
 import org.openqa.selenium.Alert;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.FluentWait;
@@ -73,6 +74,21 @@ public final class Browser {
     }
 
     /**
+     * Executes JavaScript in the context of the currently selected frame or window. The script
+     * fragment provided will be executed as the body of an anonymous function.
+     *
+     * @param script The JavaScript to execute
+     * @param args The arguments to the script. May be empty
+     * @param <T> One of Boolean, Long, Double, String, List or WebElement
+     * @return One of Boolean, Long, Double, String, List or WebElement. Or null.
+     * @see org.openqa.selenium.JavascriptExecutor#executeScript(String, Object...)
+     */
+    @SuppressWarnings("unchecked")
+    public static <T> T executeScript(String script, Object... args) {
+        return (T) ((JavascriptExecutor) getWebDriver()).executeScript(script, args);
+    }
+
+    /**
      * Gets the Options interface
      * <p>
      * Binds to an instance of CinnamonWebDriverOptions. Uses Javascript to manage cookies if the browser
@@ -114,7 +130,7 @@ public final class Browser {
         }
     }
 
-    private static WebDriver getWebDriver() {
+    public static WebDriver getWebDriver() {
         return getWebDriverContainer().getWebDriver();
     }
 

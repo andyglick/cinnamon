@@ -7,9 +7,9 @@
     <version>${version}</version>
 
     <properties>
-        <cinnamon.version>0.0.3</cinnamon.version>
-        <cucumber.options>--tags @complete,@accepted</cucumber.options>
-        <failsafe.fork.count>4</failsafe.fork.count>
+        <cinnamon.version>${projectVersion}</cinnamon.version>
+        <cucumber.options>--tags @wip</cucumber.options>
+        <failsafe.thread.count>1</failsafe.thread.count>
         <java.version>1.8</java.version>
         <env>default</env>
         <maven.build.timestamp.format>yyyy-MM-dd-HHmm</maven.build.timestamp.format>
@@ -48,8 +48,8 @@
                 <artifactId>maven-failsafe-plugin</artifactId>
                 <version>2.16</version>
                 <configuration>
-                    <forkCount>${failsafe.fork.count}</forkCount>
-                    <reuseForks>false</reuseForks>
+                    <threadCount>${failsafe.thread.count}</threadCount>
+                    <parallel>both</parallel>
                     <includes>
                         <include>**/*IT.java</include>
                     </includes>
@@ -76,9 +76,9 @@
             </plugin>
 
             <plugin>
-                <groupId>io.magentys</groupId>
+                <groupId>report.donut</groupId>
                 <artifactId>donut-maven-plugin</artifactId>
-                <version>0.0.3</version>
+                <version>1.2.1</version>
                 <executions>
                     <execution>
                         <id>execution</id>
@@ -87,14 +87,18 @@
                             <goal>generate</goal>
                         </goals>
                         <configuration>
-                            <sourceDirectory>${project.build.directory}/cucumber-reports</sourceDirectory>
-                            <outputDirectory>${project.build.directory}/donut/</outputDirectory>
+                            <resultSources>
+                                <resultSource>
+                                    <format>cucumber</format>
+                                    <directory>${project.build.directory}/cucumber-reports</directory>
+                                </resultSource>
+                            </resultSources>
+                            <outputPath>${project.build.directory}/donut/</outputPath>
                             <timestamp>${maven.build.timestamp}</timestamp>
                             <template>default</template>
                             <prefix>${project.name}</prefix>
                             <projectName>${project.name}</projectName>
                             <projectVersion>${project.version}</projectVersion>
-                            <countSkippedAsFailure>true</countSkippedAsFailure>
                         </configuration>
                     </execution>
                 </executions>
@@ -103,25 +107,26 @@
             <plugin>
                 <groupId>com.github.temyers</groupId>
                 <artifactId>cucumber-jvm-parallel-plugin</artifactId>
-                <version>1.3.0</version>
+                <version>5.0.0</version>
                 <executions>
                     <execution>
                         <id>generateRunners</id>
-                        <phase>validate</phase>
+                        <phase>generate-test-sources</phase>
                         <goals>
                             <goal>generateRunners</goal>
                         </goals>
                         <configuration>
-                            <!-- Mandatory -->
-                            <glue>io.magentys.cinnamon,${package}</glue>
-                            <!-- These are the default values -->
-                            <outputDirectory>${project.build.directory}/generated-test-sources/cucumber</outputDirectory>
-                            <featuresDirectory>src/test/resources/features/</featuresDirectory>
-                            <cucumberOutputDir>target/cucumber-reports</cucumberOutputDir>
-                            <format>json</format>
-                            <filterFeaturesByTags>true</filterFeaturesByTags>
+                            <glue>
+                                <package>${package}</package>
+                            </glue>
+                            <plugins>
+                                <plugin>
+                                    <name>json</name>
+                                </plugin>
+                            </plugins>
                             <namingScheme>pattern</namingScheme>
                             <namingPattern>{f}IT</namingPattern>
+                            <cucumberOutputDir>target/cucumber-reports</cucumberOutputDir>
                         </configuration>
                     </execution>
                 </executions>
@@ -181,24 +186,6 @@
         </dependency>
 
         <dependency>
-            <groupId>org.seleniumhq.selenium</groupId>
-            <artifactId>selenium-firefox-driver</artifactId>
-            <version>${selenium.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.seleniumhq.selenium</groupId>
-            <artifactId>htmlunit-driver</artifactId>
-            <version>2.23.2</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.codeborne</groupId>
-            <artifactId>phantomjsdriver</artifactId>
-            <version>1.3.0</version>
-        </dependency>
-
-        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>4.12</version>
@@ -211,30 +198,14 @@
             <activation>
                 <activeByDefault>true</activeByDefault>
             </activation>
-            <properties>
-                <failsafe.fork.count>1</failsafe.fork.count>
-            </properties>
         </profile>
 
         <profile>
             <id>parallel</id>
             <properties>
-                <failsafe.fork.count>0.5C</failsafe.fork.count>
+                <failsafe.thread.count>2</failsafe.thread.count>
             </properties>
         </profile>
     </profiles>
 
-    <repositories>
-        <repository>
-            <id>oss.snap</id>
-            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
-    </repositories>
-    
 </project>
