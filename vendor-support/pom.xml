@@ -5,7 +5,7 @@
     <parent>
         <artifactId>cinnamon</artifactId>
         <groupId>io.magentys</groupId>
-        <version>0.0.3-SNAPSHOT</version>
+        <version>0.2.1-SNAPSHOT</version>
     </parent>
     <artifactId>cinnamon-vendor-support</artifactId>
 
@@ -19,6 +19,11 @@
             <plugin>
                 <groupId>org.scalatest</groupId>
                 <artifactId>scalatest-maven-plugin</artifactId>
+                <configuration>
+                    <suites>
+                        io.magentys.cinnamon.webdriver.remote.CinnamonRemoteSpec
+                    </suites>
+                </configuration>
             </plugin>
         </plugins>
     </build>

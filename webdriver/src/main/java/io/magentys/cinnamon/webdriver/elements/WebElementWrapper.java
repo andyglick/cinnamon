@@ -3,13 +3,13 @@ package io.magentys.cinnamon.webdriver.elements;
 import io.magentys.cinnamon.webdriver.actions.Actions;
 import io.magentys.cinnamon.webdriver.actions.ActionsFactory;
 import org.openqa.selenium.*;
-import org.openqa.selenium.interactions.internal.Coordinates;
-import org.openqa.selenium.internal.Locatable;
-import org.openqa.selenium.internal.WrapsDriver;
+import org.openqa.selenium.interactions.Coordinates;
+import org.openqa.selenium.interactions.Locatable;
 import org.openqa.selenium.internal.WrapsElement;
 import org.openqa.selenium.support.pagefactory.ElementLocator;
 
 import java.util.List;
+import java.util.Optional;
 
 import static io.magentys.cinnamon.webdriver.WebDriverUtils.unwrapDriver;
 import static io.magentys.cinnamon.webdriver.elements.WebElementConverter.elementConverter;
@@ -33,7 +33,9 @@ public class WebElementWrapper implements WebElement, WrapsElement, Locatable, W
 
     @Override
     public WebElement getWrappedElement() {
-        return cache.getElement();
+        return Optional.ofNullable(cache.getElement()).orElseThrow(() -> new NoSuchElementException(
+                String.format("Cannot find element using locator mechanism: %s and conditions: %s", elementLocator.getBy(),
+                        elementLocator.getCondition())));
     }
 
     @Override

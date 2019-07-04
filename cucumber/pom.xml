@@ -6,7 +6,7 @@
         <groupId>io.magentys</groupId>
         <artifactId>cinnamon</artifactId>
         <relativePath>../pom.xml</relativePath>
-        <version>0.0.3-SNAPSHOT</version>
+        <version>0.2.1-SNAPSHOT</version>
     </parent>
     <artifactId>cinnamon-cucumber</artifactId>
 
@@ -24,11 +24,11 @@
                     <target>1.8</target>
                     <weaveDependencies>
                         <weaveDependency>
-                            <groupId>info.cukes</groupId>
+                            <groupId>io.cucumber</groupId>
                             <artifactId>cucumber-junit</artifactId>
                         </weaveDependency>
                         <weaveDependency>
-                            <groupId>info.cukes</groupId>
+                            <groupId>io.cucumber</groupId>
                             <artifactId>cucumber-core</artifactId>
                         </weaveDependency>
                     </weaveDependencies>
@@ -103,17 +103,17 @@
         </dependency>
 
         <dependency>
-            <groupId>info.cukes</groupId>
+            <groupId>io.cucumber</groupId>
             <artifactId>cucumber-java</artifactId>
         </dependency>
 
         <dependency>
-            <groupId>info.cukes</groupId>
+            <groupId>io.cucumber</groupId>
             <artifactId>cucumber-guice</artifactId>
         </dependency>
 
         <dependency>
-            <groupId>info.cukes</groupId>
+            <groupId>io.cucumber</groupId>
             <artifactId>cucumber-junit</artifactId>
         </dependency>
 

@@ -2,15 +2,23 @@ package io.magentys.cinnamon.conf;
 
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.filefilter.RegexFileFilter;
-import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.Yaml;
 
-import java.io.*;
-import java.util.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.lang.invoke.MethodHandles;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
 import java.util.stream.Stream;
 
 /**
@@ -30,27 +38,33 @@ import java.util.stream.Stream;
  * local-pages-url : "http://st:8080"
  * }
  */
+@SuppressWarnings("WeakerAccess")
 public class Env {
 
-    private final Logger log = LoggerFactory.getLogger(this.getClass().getName());
+    private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-    public static final Env INSTANCE = new Env(ConfigConstants.ENV_PROPERTY);
+    public static final Env INSTANCE = new Env();
 
-    private String env;
+    private String environment;
+
     public Config config;
 
     public static Env env() {
         return INSTANCE;
     }
 
-    public Env(String env) {
-        Optional param = Optional.ofNullable(env);
+    public Env() {
+        this(ConfigConstants.ENV_PROPERTY);
+    }
+
+    public Env(String environment) {
+        Optional param = Optional.ofNullable(environment);
         if (param.isPresent()) {
-            this.env = env;
+            this.environment = environment;
             try {
                 config = initConfig();
             } catch (IOException e) {
-                e.printStackTrace();
+                LOG.warn("in Env CTOR with String env as a parameter", e);
             }
         } else {
             throw new RuntimeException("Cannot initialise Env. Please provide env profile parameter (-Denv=myProfile)");
@@ -64,7 +78,7 @@ public class Env {
             return getConfigFromYml(envConfig);
         }
         if (envConfig.getName().contains(".conf")) {
-            return systemConfig.withFallback(ConfigFactory.parseFile(envConfig)).resolve().getConfig(env);
+            return systemConfig.withFallback(ConfigFactory.parseFile(envConfig)).resolve().getConfig(environment);
         }
         else {
             throw new Error("The file [" + envConfig.getAbsolutePath() + "] is not an environment config file.");
@@ -82,16 +96,17 @@ public class Env {
         Map<String, Map<String, Object>> data = ((Map<String, Map<String, Object>>) yaml
                 .load(inputStream));
         Config systemConfig = ConfigFactory.systemProperties();
-        return systemConfig.withFallback(ConfigFactory.parseMap(data)).resolve().getConfig(env);
+        return systemConfig.withFallback(ConfigFactory.parseMap(data)).resolve().getConfig(environment);
     }
 
-    private File searchConfigFileInClasspath(String filename) {
-        Stream<File> streamFiles = new ArrayList<>(
-                FileUtils.listFiles(new File(ConfigConstants.PROJECT_DIR), new RegexFileFilter(filename), TrueFileFilter.INSTANCE)).stream()
-                .filter(f -> !f.getAbsolutePath().contains(ConfigConstants.TARGET_DIR));
-
-        List<File> files = new ArrayList<>();
-        streamFiles.forEach(files::add);
+    File searchConfigFileInClasspath(String filename) {
+        final List<File> files;
+        try (Stream<Path> paths = Files.walk(new File(ConfigConstants.PROJECT_DIR).toPath())) {
+            files = paths.filter(p -> p.endsWith(filename)).filter(p -> !p.toString().contains(ConfigConstants.TARGET_DIR)).map(Path::toFile)
+                    .collect(Collectors.toList());
+        } catch (IOException e) {
+            throw new Error(e);
+        }
 
         if (files.size() == 0)
             throw new Error("Config file with name [" + filename + "] could not be found in your classpath.");
